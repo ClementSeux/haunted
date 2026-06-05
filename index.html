@@ -441,7 +441,7 @@ header h1 {
     <div class="materiel-card"><div class="icon">📦</div><div class="name">Le Couvercle</div><div class="desc">Referme le plateau. Sa face visible porte les 21 cercles des arcanes avec leurs questions gravées en arc de cercle.</div></div>
     <div class="materiel-card"><div class="icon">📌</div><div class="name">Punaises Magnétiques</div><div class="desc">Le Gardien en place 2 à 4 sur les zones du plateau intérieur. Elles restent invisibles sous le couvercle.</div></div>
     <div class="materiel-card"><div class="icon">⚫</div><div class="name">Le Pendule</div><div class="desc">Fil de soie noire, plomb métallique. Il réagit aux punaises cachées sous le couvercle — en théorie. Ou peut-être à autre chose.</div></div>
-    <div class="materiel-card"><div class="icon">🃏</div><div class="name">21 Arcanes Majeures</div><div class="desc">Les 21 grandes arcanes du tarot. Chacune pose une question unique. Le Fou n'est pas tiré — il peut être joué à tout moment.</div></div>
+    <div class="materiel-card"><div class="icon">🃏</div><div class="name">21 Arcanes Majeures</div><div class="desc">Les 21 grandes arcanes du tarot. Chacune pose une question unique au-dessus d'un cercle du couvercle.</div></div>
     <div class="materiel-card"><div class="icon">🏚</div><div class="name">Fiches Objet</div><div class="desc">36 cartes illustrant des objets de la maison, réparties par pièce. Le Gardien en choisit une secrètement.</div></div>
   </div>
 </div>
@@ -840,76 +840,76 @@ header h1 {
 // ══════════════════════════════════════════════════
 const ARCANES = [
   { num:"0",   nom:"Le Fou",              sym:"◯",  col:"#C9A227", zones:["AIR","MOBILE"],      inter:["L'ÉCLAT","LE GESTE"],       question:"Cet objet est-il hors de sa place naturelle ?",
-    texte:"Il ne tient pas en place. L'objet qu'il désigne est <ind>déplacé</ind> — il n'est pas là où il devrait être. Il est <ind>léger</ind>, facile à oublier. Peut-être est-il <ind>tombé</ind> quelque part et n'a jamais été ramassé. Cherchez dans un <ind>entre-deux</ind>, un seuil, une poche." },
+    texte:"Il ne tient pas en place. L'objet est <ind>déplacé</ind> — hors de sa place naturelle, peut-être oublié dans un entre-deux. Il est <ind>léger</ind>, facile à porter, facile à oublier. Son rapport à l'<ind>air</ind> est réel : il souffle, flotte, ou s'accroche là où courent les courants. Cherchez là où personne n'a pensé à regarder." },
   { num:"I",   nom:"Le Bateleur",         sym:"⚗",  col:"#ED93B1", zones:["MOBILE","LOI"],      inter:["LE GESTE","L'ÉCRIT"],       question:"Sert-il à agir ou à transformer autre chose ?",
-    texte:"Il jongle, manipule, transforme. L'objet est un <ind>outil</ind> — il sert à faire quelque chose d'autre. Il a des parties <ind>mobiles</ind>. On l'utilise avec les <ind>mains</ind>. Il est associé à un <ind>geste précis</ind>, presque rituel." },
+    texte:"Il jongle, manipule, transforme. L'objet est <ind>mobile</ind> — il se déplace, pivote, s'actionne. Il est aussi lié à la <ind>loi</ind> au sens large : une règle d'usage, un mode d'emploi précis. On l'utilise selon un <ind>geste précis</ind>, presque rituel. C'est un outil, pas un ornement." },
   { num:"II",  nom:"La Papesse",          sym:"📖", col:"#AFA9EC", zones:["SAVOIR","INTIMITÉ"], inter:["L'ÉCRIT","LE SILENCE"],     question:"Contient-il de l'information ou un secret ?",
-    texte:"Elle ne parle pas — elle sait. L'objet contient une <ind>information</ind>, un <ind>texte</ind>, une <ind>trace écrite</ind>. Il est fermé, protégé. Il vit dans un endroit <ind>intime</ind>. Ce n'est pas sa forme qui compte — c'est ce qu'il porte dedans." },
+    texte:"Elle ne parle pas — elle sait. L'objet contient du <ind>savoir</ind> — une information, un texte, une trace. Il vit dans un endroit <ind>intime</ind>, personnel, jamais exposé aux regards. Ce n'est pas sa forme qui compte — c'est ce qu'il porte en lui. Il est fermé, discret, patient." },
   { num:"III", nom:"L'Impératrice",       sym:"❧",  col:"#9FE1CB", zones:["VIVANT","SOIN"],     inter:["LE SCEAU"],                 question:"Est-il organique, naturel, ou lié au soin ?",
-    texte:"Elle règne sur le vivant. L'objet est <ind>organique</ind> — bois, tissu, cuir, matière naturelle. Il est <ind>beau</ind>, pensé pour plaire. On le trouve dans un espace de <ind>confort</ind>. Il dégage une impression de <ind>douceur</ind> — mais c'est lui, l'objet maudit." },
+    texte:"Elle règne sur le vivant. L'objet est <ind>vivant</ind> ou l'a été — bois, cuir, tissu, matière organique. Il est lié au <ind>soin</ind> : on s'en occupe, on l'entretient, il participe à un rituel de bien-être. Il est beau d'une beauté naturelle. On le trouve là où l'on prend soin de soi." },
   { num:"IV",  nom:"L'Empereur",          sym:"⚖",  col:"#FAC775", zones:["LOI","LOURD"],       inter:["LE SCEAU"],                 question:"Impose-t-il une règle ou est-il massif, immobile ?",
-    texte:"Il ordonne, structure, délimite. L'objet impose une <ind>règle</ind> — il ferme, interdit, définit. Il est <ind>rigide</ind>, à angles droits. Il appartient à un espace de <ind>pouvoir</ind> domestique. Il porte peut-être une <ind>inscription</ind> officielle." },
+    texte:"Il ordonne, structure, délimite. L'objet impose une <ind>loi</ind> — il ferme, interdit, définit ce qui est à qui. Il est <ind>lourd</ind>, massif, difficile à déplacer. Il appartient à un espace de pouvoir domestique. Il est là depuis longtemps et ne demande pas à partir." },
   { num:"V",   nom:"Le Pape",             sym:"✝",  col:"#85B7EB", zones:["SAVOIR","COMMUN"],   inter:["LA LOI","L'ABSOLUTION"],   question:"Est-il lié à un rite visible de tous ?",
-    texte:"Il transmet — gardien d'une <ind>tradition</ind>. L'objet est <ind>hérité</ind>, il a appartenu à quelqu'un avant. Il est associé à un <ind>rite</ind> collectif. Il se trouve dans un endroit <ind>solennel</ind>. Son poids est <ind>moral</ind> autant que physique." },
+    texte:"Il transmet — gardien d'une tradition. L'objet est porteur de <ind>savoir</ind> — une mémoire, un héritage écrit ou gravé. Il appartient à l'espace <ind>commun</ind>, visible de tous, presque solennel. On le voit chaque jour sans le regarder. Son poids est moral autant que physique." },
   { num:"VI",  nom:"L'Amoureux",          sym:"∞",  col:"#ED93B1", zones:["LIEN","INTIMITÉ"],   inter:["LE CARREFOUR","LE LIEN","L'ATTENTE"], question:"Est-il associé à une personne aimée ou un couple ?",
-    texte:"Il hésite entre deux chemins. L'objet appartient à une <ind>relation</ind> — symbole d'un <ind>lien</ind>. Il est peut-être <ind>double</ind>. On le donne ou on le reçoit. Il porte une charge <ind>affective</ind> disproportionnée à sa taille." },
+    texte:"Il hésite entre deux chemins. L'objet est porteur d'un <ind>lien</ind> — il symbolise une relation, une attache entre deux personnes. Il vit dans un endroit <ind>intime</ind>, jamais exposé aux visiteurs. Il porte une charge affective disproportionnée à sa taille. Qui l'a donné ? Pourquoi est-il encore là ?" },
   { num:"VII", nom:"Le Chariot",          sym:"⟳",  col:"#AFA9EC", zones:["MOBILE","SEUIL"],   inter:["LE VOYAGE","LE TOUR"],      question:"Peut-on le déplacer ou se trouve-t-il à un passage ?",
-    texte:"Il avance, il ne s'arrête pas. L'objet est fait pour <ind>se déplacer</ind> — il a une forme qu'on attrape pour l'emporter. Il vit près d'un <ind>seuil</ind>. Il appartient à quelqu'un qui part souvent. Même immobile, il évoque le <ind>départ</ind>." },
+    texte:"Il avance, il ne s'arrête pas. L'objet est <ind>mobile</ind> — fait pour se déplacer, pour être emporté. Il se trouve près d'un <ind>seuil</ind> : une entrée, une porte, un endroit de passage. Même immobile, il évoque le départ. On le pose là en arrivant, on le reprend en partant." },
   { num:"VIII",nom:"La Justice",          sym:"⚔",  col:"#f0d878", zones:["TRANCHANT","LOI"],  inter:["LA SENTENCE","L'APPEL","LA LOI"], question:"Coupe-t-il, divise-t-il, ou est-il lié à la loi ?",
-    texte:"Elle pèse, tranche, décide. L'objet est lié à une <ind>règle</ind> ou un <ind>droit</ind>. Il a deux faces, deux côtés. Il <ind>coupe</ind> ou délimite. On le trouve dans un endroit <ind>officiel</ind>. Sa lame, réelle ou symbolique, n'a pas fini de trancher." },
+    texte:"Elle pèse, tranche, décide. L'objet est <ind>tranchant</ind> — il coupe, divise, délimite. Il est aussi lié à la <ind>loi</ind> : une règle, un droit, une autorité. Il a deux faces, deux côtés. Sa lame, réelle ou symbolique, n'a pas fini de trancher." },
   { num:"IX",  nom:"L'Hermite",           sym:"☽",  col:"#FAC775", zones:["PROFONDEUR","PASSÉ"],inter:["LE SILENCE","LE POIDS"],   question:"Est-il caché, isolé, ancien ou oublié ?",
-    texte:"Il s'éloigne de la foule et lève sa lanterne. L'objet est <ind>isolé</ind>, retiré, peut-être oublié. Il est <ind>ancien</ind> — usé, patiné. Il est <ind>dense</ind>, lourd pour sa taille. Sa présence est devenue si normale qu'elle en est devenue <ind>invisible</ind>." },
-  { num:"X",   nom:"La Roue",             sym:"⊙",  col:"#FAC775", zones:["MOBILE","TEMPS"],   inter:["LE TOUR","L'AXE","LE CARREFOUR"], question:"Répète-t-il un geste ou tourne-t-il sur lui-même ?",
-    texte:"Elle tourne — toujours. L'objet est lié à un <ind>cycle</ind>, une <ind>répétition</ind>. Il s'utilise à intervalles réguliers. Il tourne, oscille, ou revient toujours à la même place. Il est associé à un <ind>rythme domestique</ind> — matinal, nocturne." },
+    texte:"Il lève sa lanterne dans l'obscurité. L'objet gît dans la <ind>profondeur</ind> — un tiroir du fond, un recoin oublié, sous quelque chose. Il est lié au <ind>passé</ind> : ancien, usé, patiné, portant les marques du temps. On ne l'a pas jeté par habitude ou par peur. Il attend qu'on le retrouve." },
+  { num:"X",   nom:"La Roue",             sym:"⊙",  col:"#FAC775", zones:["MOBILE","PASSÉ"],   inter:["LE TOUR","L'AXE","LE CARREFOUR"], question:"Répète-t-il un geste ou tourne-t-il sur lui-même ?",
+    texte:"Elle tourne — toujours. L'objet est <ind>mobile</ind>, il tourne, oscille, revient à sa place. Il est lié au <ind>passé</ind> par un cycle qui se répète : un geste quotidien, un rituel, quelque chose qu'on fait depuis toujours à heure fixe. Il n'a pas changé depuis des années. C'est sa permanence qui le rend invisible." },
   { num:"XI",  nom:"La Force",            sym:"⬡",  col:"#F0997B", zones:["LOURD","VIVANT"],   inter:["L'ANCRE","LE POIDS"],      question:"Est-il lourd, dense, ou lié à la force physique ?",
-    texte:"Elle ne crie pas — elle tient. L'objet est <ind>solide</ind>, résistant, difficile à briser. Il est <ind>lourd</ind>. Il est fait d'une matière <ind>noble</ind> — métal, pierre, bois dense. Sa présence impose une <ind>autorité silencieuse</ind>." },
+    texte:"Elle ne crie pas — elle tient. L'objet est <ind>lourd</ind>, solide, résistant. Il est fait d'une matière <ind>vivante</ind> ou noble — bois dense, pierre, os, cuir épais. On ne le déplace pas sans raison. Sa simple présence dans la pièce impose une sorte d'autorité silencieuse." },
   { num:"XII", nom:"Le Pendu",            sym:"↑",  col:"#AFA9EC", zones:["HAUTEUR","LIEN"],   inter:["L'ATTENTE","LA CHUTE"],   question:"Se trouve-t-il en hauteur ou suspendu ?",
-    texte:"Il attend, suspendu entre deux états. L'objet est en <ind>hauteur</ind> — accroché, suspendu. Il est dans un état d'<ind>entre-deux</ind> : pas tout à fait en usage, pas tout à fait rangé. On l'a mis là temporairement il y a longtemps. Cherchez en levant les yeux." },
+    texte:"Il attend, suspendu entre deux états. L'objet est en <ind>hauteur</ind> — accroché, posé sur une surface élevée, suspendu. Il est porteur d'un <ind>lien</ind> : une corde, un fil, une chaîne, ou simplement le souvenir d'une attache. On l'a mis là temporairement. Il y est depuis longtemps. Cherchez en levant les yeux." },
   { num:"XIII",nom:"La Mort",             sym:"✝",  col:"#F7C1C1", zones:["MORT","FRAGILE"],   inter:["LA CHUTE","LA SENTENCE","LA CHAÎNE"], question:"Est-il lié à la mort, au deuil, ou est-il fragile ?",
-    texte:"Elle ne détruit pas — elle transforme. L'objet est lié à une <ind>fin</ind> ou un <ind>deuil</ind>. Il appartient peut-être à quelqu'un qui n'est plus là. Il est <ind>froid</ind>, sombre. On l'a gardé sans savoir pourquoi — par <ind>culpabilité</ind>, par peur de jeter." },
+    texte:"Elle ne détruit pas — elle transforme. L'objet est lié à la <ind>mort</ind> : un deuil, un souvenir, quelqu'un qui n'est plus là. Il est <ind>fragile</ind> — verre, porcelaine, papier jauni. On le garde par culpabilité, par peur de jeter, par respect. Il alourdit la pièce de sa seule présence." },
   { num:"XIV", nom:"La Tempérance",       sym:"≋",  col:"#5DCAA5", zones:["EAU","SOIN"],       inter:["LA SOURCE","L'ATTENTE"],   question:"Contient-il ou utilise-t-il un liquide ?",
-    texte:"Elle verse d'un vase dans l'autre, sans jamais renverser. L'objet contient un <ind>liquide</ind>, ou il en régule un. Il est lié aux soins, à la <ind>santé</ind>, à la mesure. Sa matière est lisse, froide, précise. On le trouve là où l'on soigne, où l'on dose." },
+    texte:"Elle verse d'un vase dans l'autre. L'objet contient de l'<ind>eau</ind> ou en régule — il s'emplit, se vide, filtre, achemine. Il est lié au <ind>soin</ind> : hygiène, santé, médecine, nourriture. Sa matière est lisse, froide, précise. On le trouve là où l'on dose, où l'on mesure, où l'on guérit." },
   { num:"XV",  nom:"Le Diable",           sym:"△",  col:"#F0997B", zones:["FEU","TRANCHANT"],  inter:["LA CHAÎNE","L'EFFONDREMENT"], question:"Génère-t-il de la chaleur ou est-il dangereux ?",
-    texte:"Il enchaîne — et ses prisonniers ne savent pas qu'ils peuvent partir. L'objet crée une <ind>dépendance</ind>. Il dégage de la <ind>chaleur</ind> ou produit une <ind>lumière artificielle</ind>. Il est peut-être <ind>électrique</ind>. On savait qu'il faudrait s'en défaire." },
+    texte:"Il enchaîne — et ses prisonniers ne savent pas qu'ils peuvent partir. L'objet est lié au <ind>feu</ind> : il brûle, chauffe, produit de la lumière artificielle, consume. Il est <ind>tranchant</ind> dans son emprise — on ne peut pas s'en défaire facilement. On savait qu'il le faudrait. On ne l'a pas fait." },
   { num:"XVI", nom:"La Maison-Dieu",      sym:"⛶",  col:"#85B7EB", zones:["FRAGILE","SEUIL"],  inter:["L'EFFONDREMENT","LE RÉVEIL"], question:"L'objet est-il au seuil ou peut-il se briser ?",
-    texte:"La foudre frappe la tour. L'objet est <ind>fragile</ind> ou brisé — peut-être déjà fêlé. Il se trouve près d'un <ind>seuil</ind>, d'une ouverture. Il a subi un <ind>choc</ind>. Sa présence dans la maison est une erreur — il n'aurait pas dû rester." },
+    texte:"La foudre frappe la tour. L'objet est <ind>fragile</ind> — brisé, fêlé, réparé maladroitement, ou sur le point de l'être. Il se trouve près d'un <ind>seuil</ind> : une porte, une fenêtre, un endroit vulnérable. Sa présence ici est une erreur. Il n'aurait pas dû rester." },
   { num:"XVII",nom:"L'Étoile",            sym:"✦",  col:"#9FE1CB", zones:["LUMIÈRE","ÉTHER"],  inter:["LE VOILE","LA SOURCE"],   question:"Émet-il de la lumière ou est-il mystérieux ?",
-    texte:"Elle verse, inlassablement. L'objet appartient au règne de l'espoir — il est <ind>transparent</ind> ou <ind>lumineux</ind>. Il capte ce qui vient du dehors. Il se tient dans un endroit <ind>exposé</ind>. On y verrait son reflet si on s'approchait assez." },
+    texte:"Elle verse, inlassablement. L'objet appartient au règne de la <ind>lumière</ind> — il brille, réfléchit, capte ce qui vient du dehors. Il a quelque chose d'<ind>éthéré</ind>, d'immatériel, de presque trop beau pour être réel. On y verrait son reflet si on s'approchait assez. Il attend dans un endroit exposé." },
   { num:"XVIII",nom:"La Lune",            sym:"☽",  col:"#AFA9EC", zones:["ÉTHER","INTIMITÉ"], inter:["LE VOILE","L'AUBE"],      question:"Est-il lié au sommeil, aux rêves ou au privé ?",
-    texte:"Elle gouverne ce qu'on ne voit qu'à demi. L'objet vit dans le <ind>demi-obscur</ind> — une pièce où la lumière entre peu. Il a quelque chose d'<ind>organique</ind>. Peut-être lié au <ind>sommeil</ind>. Il porte une charge <ind>émotionnelle</ind> que son apparence ne trahit pas." },
+    texte:"Elle gouverne ce qu'on ne voit qu'à demi. L'objet est lié à l'<ind>éther</ind> — il est mystérieux, difficile à cerner, porteur d'une charge invisible. Il vit dans l'<ind>intimité</ind> : une pièce où la lumière entre peu, un espace de nuit et de repos. On ne le montre pas. On le cache à peine." },
   { num:"XIX", nom:"Le Soleil",           sym:"☀",  col:"#FAC775", zones:["LUMIÈRE","COMMUN"], inter:["L'AUBE","L'ÉCLAT"],       question:"Est-il brillant et visible de tous ?",
-    texte:"Ce qu'il éclaire ne peut se cacher longtemps. L'objet est <ind>visible</ind>, peut-être ostensiblement exposé — il trône, il <ind>rayonne</ind>. Il appartient à un espace <ind>commun</ind>. Sa surface est <ind>claire</ind>, peut-être <ind>chaude</ind>. Le danger le plus évident est celui qu'on ne voit plus." },
+    texte:"Ce qu'il éclaire ne peut se cacher longtemps. L'objet est source de <ind>lumière</ind> ou en capte — il brille, rayonne, attire le regard. Il appartient à un espace <ind>commun</ind> : une pièce traversée par tous, visible de n'importe qui. Le danger le plus évident est celui qu'on ne voit plus." },
   { num:"XX",  nom:"Le Jugement",         sym:"♪",  col:"#F7C1C1", zones:["MORT","SONORE"],    inter:["L'APPEL","LE RÉVEIL","L'ABSOLUTION"], question:"Fait-il du bruit ou est-il lié à un appel ?",
-    texte:"L'ange sonne — les morts se lèvent. L'objet fait du <ind>bruit</ind>, ou il en a fait. Il <ind>appelle</ind>, il signale, il interrompt le silence. Sa <ind>vibration</ind> traverse les murs. Il est peut-être à <ind>piles</ind> ou mécanique. Quand il se manifeste, tout le monde l'entend." },
+    texte:"L'ange sonne — les morts se lèvent. L'objet est lié à la <ind>mort</ind> — un souvenir funèbre, un objet de deuil, une présence qui ne devrait plus être là. Il est aussi <ind>sonore</ind> : il a fait du bruit, ou il en fait encore. Il appelle, il signale, il interrompt le silence. Quand il se manifeste, tout le monde l'entend." },
   { num:"XXI", nom:"Le Monde",            sym:"◉",  col:"#C9A227", zones:["TERRE","SEUIL"],    inter:["LE VOYAGE","L'ANCRE","L'AXE","LE LIEN"], question:"Est-il ancré au sol ou marque-t-il une frontière ?",
-    texte:"Il est le centre de tout. L'objet est au <ind>cœur</ind> de la maison — là où convergent les usages et les regards. Il est <ind>complet</ind>. On peut l'utiliser de <ind>plusieurs façons</ind>. C'est l'objet dont l'absence se remarquerait le plus vite." },
+    texte:"Il est le centre de tout. L'objet est ancré dans la <ind>terre</ind> — lourd, stable, posé au sol, fait de matière dense et durable. Il marque un <ind>seuil</ind> : une frontière, une limite, un endroit où quelque chose commence ou finit. C'est l'objet dont l'absence se remarquerait le plus vite." },
 ];
 
 const OBJETS = [
   { id:"seche",  nom:"Sèche-cheveux",     icon:"💨", piece:"Salle de bain",   zones:["EAU","FEU","MOBILE","SOIN"] },
   { id:"miroir", nom:"Miroir brisé",       icon:"🪞", piece:"Couloir",          zones:["LUMIÈRE","FRAGILE","SEUIL","INTIMITÉ"] },
   { id:"journal",nom:"Journal intime",     icon:"📔", piece:"Chambre",          zones:["SAVOIR","INTIMITÉ","PASSÉ","LIEN"] },
-  { id:"horloge",nom:"Vieille horloge",    icon:"🕰", piece:"Salon",            zones:["SONORE","PASSÉ","MOBILE","COMMUN"] },
+  { id:"horloge",nom:"Vieille horloge",    icon:"🕰", piece:"Salon",            zones:["SONORE","PASSÉ","MOBILE","TERRE"] },
   { id:"couteau",nom:"Couteau à pain",     icon:"🔪", piece:"Cuisine",          zones:["TRANCHANT","FEU","SOIN","COMMUN"] },
-  { id:"boite",  nom:"Boîte à bijoux",     icon:"📦", piece:"Chambre",          zones:["CONTENANT","INTIMITÉ","LIEN","PASSÉ"] },
+  { id:"boite",  nom:"Boîte à bijoux",     icon:"📦", piece:"Chambre",          zones:["INTIMITÉ","LIEN","PASSÉ","LOURD"] },
   { id:"livre",  nom:"Vieux livre",        icon:"📚", piece:"Bibliothèque",     zones:["SAVOIR","PASSÉ","TERRE","LOURD"] },
   { id:"lampe",  nom:"Lampe de chevet",    icon:"🕯", piece:"Chambre",          zones:["LUMIÈRE","FEU","INTIMITÉ","SOIN"] },
-  { id:"cle",    nom:"Trousseau de clés",  icon:"🗝", piece:"Entrée",           zones:["LOI","SEUIL","MÉTAL","MOBILE"] },
-  { id:"photo",  nom:"Portrait encadré",   icon:"🖼", piece:"Salon",            zones:["LIEN","MORT","SAVOIR","COMMUN"] },
-  { id:"vase",   nom:"Vase en porcelaine", icon:"🏺", piece:"Salon",            zones:["CONTENANT","EAU","FRAGILE","COMMUN"] },
+  { id:"cle",    nom:"Trousseau de clés",  icon:"🗝", piece:"Entrée",           zones:["LOI","SEUIL","MOBILE","TRANCHANT"] },
+  { id:"photo",  nom:"Portrait encadré",   icon:"🖼", piece:"Salon",            zones:["LIEN","MORT","SAVOIR","LUMIÈRE"] },
+  { id:"vase",   nom:"Vase en porcelaine", icon:"🏺", piece:"Salon",            zones:["EAU","FRAGILE","SEUIL","TERRE"] },
   { id:"pendule",nom:"Pendule murale",     icon:"⏰", piece:"Couloir",          zones:["MOBILE","SONORE","HAUTEUR","SEUIL"] },
 ];
 
 const INDICES = [
   {id:"EAU",sym:"≋",nom:"EAU"},{id:"FEU",sym:"△",nom:"FEU"},{id:"TERRE",sym:"▽",nom:"TERRE"},
   {id:"AIR",sym:"◻",nom:"AIR"},{id:"ÉTHER",sym:"✦",nom:"ÉTHER"},{id:"TRANCHANT",sym:"⚔",nom:"TRANCHANT"},
-  {id:"CONTENANT",sym:"◎",nom:"CONTENANT"},{id:"VIVANT",sym:"❧",nom:"VIVANT"},{id:"MOBILE",sym:"⟳",nom:"MOBILE"},
+  {id:"TERRE",sym:"▽",nom:"TERRE"},{id:"VIVANT",sym:"❧",nom:"VIVANT"},{id:"MOBILE",sym:"⟳",nom:"MOBILE"},
   {id:"SONORE",sym:"♪",nom:"SONORE"},{id:"HAUTEUR",sym:"↑",nom:"HAUTEUR"},{id:"PROFONDEUR",sym:"↓",nom:"PROFOND."},
   {id:"SEUIL",sym:"⛶",nom:"SEUIL"},{id:"INTIMITÉ",sym:"☽",nom:"INTIMITÉ"},{id:"COMMUN",sym:"⌂",nom:"COMMUN"},
   {id:"PASSÉ",sym:"⌛",nom:"PASSÉ"},{id:"FRAGILE",sym:"💧",nom:"FRAGILE"},{id:"LUMIÈRE",sym:"☀",nom:"LUMIÈRE"},
   {id:"LOURD",sym:"⬡",nom:"LOURD"},{id:"LOI",sym:"⚖",nom:"LOI"},{id:"MORT",sym:"✝",nom:"MORT"},
   {id:"LIEN",sym:"∞",nom:"LIEN"},{id:"SAVOIR",sym:"✎",nom:"SAVOIR"},{id:"SOIN",sym:"♥",nom:"SOIN"},
-  {id:"MÉTAL",sym:"⚙",nom:"MÉTAL"},
+  
 ];
 
 // État
@@ -928,7 +928,7 @@ function initArcaneGrid(){
         <span class="ae-num">${a.num}</span>
         <span class="ae-sym">${a.sym}</span>
         <span class="ae-nom" style="color:${a.col}">${a.nom}</span>
-        <span class="ae-zones">${a.zones.join(' · ')}</span>
+        <span class="ae-zones">${a.inter.join(' · ')}</span>
       </div>
       <p style="font-family:'Cinzel',serif;font-size:10px;color:rgba(200,180,140,0.5);letter-spacing:1px;margin-bottom:8px;font-style:italic">${a.question}</p>
       <p class="ae-text">${a.texte.replace(/<ind>(.*?)<\/ind>/g,'<span class="ind">$1</span>')}</p>
@@ -1023,6 +1023,7 @@ function tirerArcane(){
     <div class="carte-num" style="color:${a.col}">${a.num}</div>
     <div class="carte-nom">${a.nom}</div>
     <div class="carte-sym" style="filter:drop-shadow(0 0 12px ${a.col}88)">${a.sym}</div>
+    <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:${a.col}88;margin:6px 0 4px">${a.inter.join(' · ')}</div>
     <div class="carte-question">${a.question}</div>
     <div class="carte-texte" id="carte-texte-inner">${a.texte.replace(/<ind>(.*?)<\/ind>/g,'<span class="ind">$1</span>')}</div>
   `;
