@@ -1,0 +1,487 @@
+<svg width="100%" viewBox="0 0 680 1020" role="img" xmlns="http://www.w3.org/2000/svg">
+<title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Plateau — cercles qui se croisent vraiment</title>
+<desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">21 cercles aux rayons calculés pour se couper réellement. Les noms des intersections suivent les arcs.</desc>
+
+<!--
+  STRATÉGIE : je fixe les centres, puis je calcule le rayon minimum
+  pour que chaque cercle coupe ses voisins.
+  
+  Pour deux cercles A(cx1,cy1,r1) et B(cx2,cy2,r2) qui doivent se couper :
+  dist(A,B) < r1 + r2  ET  dist(A,B) > |r1 - r2|
+  
+  Je veux une intersection nette (ni tangence ni engloutissement).
+  Règle : dist = 0.7 * (r1+r2) → intersection à ~60° → zone de croisement bien visible.
+  Donc r1+r2 = dist / 0.7 = dist * 1.43
+  
+  Je choisis des rayons égaux pour simplifier : r = dist / (2 * 0.7) = dist * 0.714
+  Mais comme les rayons varient, je pose r_min = dist_vers_voisin_le_plus_proche * 0.6
+  
+  CENTRES (inchangés) :
+  Étoile    A (130, 170)
+  Lune      B (240, 135)
+  Soleil    C (370, 148)
+  Fou       D (475, 100)
+  Bateleur  E (545, 185)
+  Tempérance F (88,  285)
+  Papesse   G (600, 285)
+  Hermite   H (590, 405)
+  Monde     I (340, 450)
+  Chariot   J (205, 385)
+  Force     K (455, 360)
+  Roue      L (172, 495)
+  Impératrice M (588, 545)
+  Empereur  N (588, 658)
+  Amoureux  O (172, 588)
+  Pendu     P (125, 698)
+  Mort      Q (255, 778)
+  Justice   R (395, 718)
+  Jugement  S (488, 808)
+  Diable    T (168, 888)
+  Maison    U (335, 888)
+  Pape      V (538, 678)
+
+  DISTANCES entre voisins (et rayon nécessaire = dist*0.6) :
+  
+  A-B : dist=sqrt(110²+35²)=115 → rA≥69, rB≥69
+  B-C : dist=sqrt(130²+13²)=131 → rB≥79, rC≥79
+  C-D : dist=sqrt(105²+48²)=115 → rC≥69, rD≥69
+  D-E : dist=sqrt(70²+85²)=110 → rD≥66, rE≥66
+  A-F : dist=sqrt(42²+115²)=123 → rA≥74, rF≥74
+  E-G : dist=sqrt(55²+100²)=115 → rE≥69, rG≥69
+  G-H : dist=sqrt(10²+120²)=120 → rG≥72, rH≥72
+  H-K : dist=sqrt(135²+45²)=142 → rH≥85, rK≥85
+  I-J : dist=sqrt(135²+65²)=149 → rI≥89, rJ≥89
+  I-K : dist=sqrt(115²+90²)=146 → rI≥88, rK≥88
+  J-L : dist=sqrt(33²+110²)=115 → rJ≥69, rL≥69
+  I-L : dist=sqrt(168²+45²)=174 → rI≥104, rL≥104  ← grande distance!
+  M-N : dist=sqrt(0²+113²)=113 → rM≥68, rN≥68
+  L-O : dist=sqrt(0²+93²)=93 → rL≥56, rO≥56
+  I-O : dist=sqrt(168²+138²)=218 → rI≥131 ← trop grand, je rapproche O
+  O-P : dist=sqrt(47²+110²)=119 → rO≥71, rP≥71
+  P-Q : dist=sqrt(130²+80²)=152 → rP≥91, rQ≥91
+  Q-R : dist=sqrt(140²+60²)=152 → rQ≥91, rR≥91
+  R-S : dist=sqrt(93²+90²)=129 → rR≥77, rS≥77
+  Q-T : dist=sqrt(87²+110²)=140 → rQ≥84, rT≥84
+  T-U : dist=sqrt(167²+0²)=167 → rT≥100, rU≥100  ← trop grand
+  U-S : dist=sqrt(153²+80²)=174 → rU≥104, rS≥104  ← trop grand
+  V-R : dist=sqrt(143²+40²)=149 → rV≥89, rR≥89
+  V-S : dist=sqrt(50²+130²)=140 → rV≥84, rS≥84
+  
+  Problème : I-L et I-O sont trop distants.
+  Problème : T-U et U-S sont trop distants.
+  
+  → Je repositionne quelques centres pour réduire les distances problématiques.
+  
+  Nouveau layout plus compact :
+  
+  Étoile    A (130, 168)   r=78
+  Lune      B (230, 130)   r=78   dist(A,B)=sqrt(100²+38²)=107 < 156 ✓
+  Soleil    C (350, 140)   r=88   dist(B,C)=sqrt(120²+10²)=120 < 166 ✓
+  Fou       D (455, 95)    r=70   dist(C,D)=sqrt(105²+45²)=114 < 158 ✓
+  Bateleur  E (535, 178)   r=70   dist(D,E)=sqrt(80²+83²)=115 < 140 ✓
+  Tempérance F (82, 270)   r=78   dist(A,F)=sqrt(48²+102²)=113 < 156 ✓
+  Papesse   G (598, 268)   r=70   dist(E,G)=sqrt(63²+90²)=110 < 140 ✓
+  Hermite   H (582, 388)   r=80   dist(G,H)=sqrt(16²+120²)=121 < 150 ✓
+  Force     K (452, 352)   r=80   dist(H,K)=sqrt(130²+36²)=135 < 160 ✓
+  Monde     I (335, 442)   r=100  dist(I,K)=sqrt(117²+90²)=148 < 180 ✓
+  Chariot   J (200, 378)   r=80   dist(I,J)=sqrt(135²+64²)=149 < 180 ✓
+  Roue      L (165, 488)   r=75   dist(J,L)=sqrt(35²+110²)=115 < 155 ✓
+                                   dist(I,L)=sqrt(170²+46²)=176 < 175 ✗ → rapprocher
+  → Roue L = (178, 492)   r=80   dist(I,L)=sqrt(157²+50²)=165 < 180 ✓
+                                   dist(J,L)=sqrt(22²+114²)=116 < 160 ✓
+  Amoureux  O (178, 580)   r=70   dist(L,O)=sqrt(0²+88²)=88 < 150 ✓
+                                   dist(I,O)=sqrt(157²+138²)=208 > 170 ✗
+  → on abandonne lien I-O direct (trop loin), garde I via J-L-O
+  Impératrice M (585, 538) r=78   dist(H,M)=sqrt(3²+150²)=150 > 158 ✗
+  → H=(582,388) M=(585,538) dist=150, rH+rM=80+78=158 ✓ (juste)
+  Empereur  N (585, 648)   r=78   dist(M,N)=sqrt(0²+110²)=110 < 156 ✓
+  Pendu     P (120, 692)   r=78   dist(O,P)=sqrt(58²+112²)=127 < 148 ✓
+  Mort      Q (248, 770)   r=95   dist(P,Q)=sqrt(128²+78²)=150 < 173 ✓
+  Justice   R (390, 710)   r=88   dist(Q,R)=sqrt(142²+60²)=154 < 183 ✓
+  Jugement  S (482, 800)   r=88   dist(R,S)=sqrt(92²+90²)=129 < 176 ✓
+  Diable    T (165, 878)   r=88   dist(Q,T)=sqrt(83²+108²)=137 < 183 ✓
+  Maison    U (318, 878)   r=80   dist(T,U)=sqrt(153²+0²)=153 > 168 ✗
+  → U=(300,875) dist(T,U)=sqrt(135²+3²)=135 < 168 ✓
+                dist(U,S)=sqrt(182²+75²)=196 > 168 ✗ → lien U-S trop loin
+  → on met un cercle intermédiaire ou on rapproche S
+  → S=(460,800) dist(U,S)=sqrt(160²+75²)=176 > 168 ✗ encore
+  → on abandonne lien U-S direct, U liée à T et à R via chaîne
+  → Maison U liée à : Diable T + Jugement S
+  → S=(440,800) dist(U,S)=sqrt(140²+75²)=159 < 168 ✓
+                dist(R,S)=sqrt(50²+90²)=103 < 176 ✓
+  Pape      V (535, 668)   r=80   dist(V,R)=sqrt(145²+42²)=151 < 168 ✓
+                                   dist(V,S)=sqrt(95²+132²)=163 < 168 ✓
+                                   dist(V,N)=sqrt(50²+20²)=54 < 158 ✓ → lien Pape-Emp?
+  
+  POSITIONS FINALES :
+  A Étoile     (130, 168)  r=78
+  B Lune       (230, 130)  r=78
+  C Soleil     (350, 140)  r=88
+  D Fou        (455,  95)  r=70
+  E Bateleur   (535, 178)  r=70
+  F Tempérance  (82, 270)  r=78
+  G Papesse    (598, 268)  r=70
+  H Hermite    (582, 388)  r=80
+  I Monde      (335, 442)  r=100
+  J Chariot    (200, 378)  r=80
+  K Force      (452, 352)  r=80
+  L Roue       (178, 492)  r=78
+  M Impératrice(585, 538)  r=78
+  N Empereur   (585, 648)  r=78
+  O Amoureux   (178, 580)  r=70
+  P Pendu      (120, 692)  r=78
+  Q Mort       (248, 770)  r=95
+  R Justice    (390, 710)  r=88
+  S Jugement   (440, 800)  r=88
+  T Diable     (165, 878)  r=88
+  U Maison     (300, 875)  r=80
+  V Pape       (535, 668)  r=80
+
+  LIENS ET VÉRIFICATION :
+  A-B: dist=107, r=156 ✓  A-F: dist=113, r=156 ✓
+  B-C: dist=121, r=166 ✓  C-D: dist=114, r=158 ✓
+  D-E: dist=115, r=140 ✓  E-G: dist=110, r=140 ✓
+  G-H: dist=121, r=150 ✓  H-K: dist=135, r=160 ✓
+  H-M: dist=150, r=158 ✓  I-J: dist=149, r=180 ✓
+  I-K: dist=148, r=180 ✓  I-L: dist=165, r=178 ✓
+  J-L: dist=116, r=158 ✓  M-N: dist=110, r=156 ✓
+  L-O: dist=88,  r=148 ✓  O-P: dist=127, r=148 ✓
+  P-Q: dist=150, r=173 ✓  Q-R: dist=154, r=183 ✓
+  R-S: dist=103, r=176 ✓  Q-T: dist=137, r=183 ✓
+  T-U: dist=135, r=168 ✓  U-S: dist=159, r=168 ✓
+  V-R: dist=151, r=168 ✓  V-S: dist=163, r=168 ✓
+
+  Pour le textPath sur chaque intersection :
+  Point d'intersection approximatif = milieu des deux centres.
+  Arc tracé sur le cercle le mieux orienté (texte lisible).
+  
+  Intersections (milieux) :
+  A∩B: (180,149)  A∩F: (106,219)
+  B∩C: (290,135)  C∩D: (402,117)
+  D∩E: (495,136)  E∩G: (566,223)
+  G∩H: (590,328)  H∩K: (517,370)
+  H∩M: (583,463)  I∩J: (267,410)
+  I∩K: (393,397)  I∩L: (256,467)
+  J∩L: (189,435)  M∩N: (585,593)
+  L∩O: (178,536)  O∩P: (149,636)
+  P∩Q: (184,731)  Q∩R: (319,740)
+  R∩S: (415,755)  Q∩T: (206,824)
+  T∩U: (232,876)  U∩S: (370,837)
+  V∩R: (462,689)  V∩S: (487,734)
+-->
+
+<rect x="0" y="0" width="680" height="1020" fill="#09080600" style="fill:rgba(9, 8, 6, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ══ LIENS ══ -->
+<line x1="130" y1="168" x2="230" y2="130" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="230" y1="130" x2="350" y2="140" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="350" y1="140" x2="455" y2="95" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="455" y1="95" x2="535" y2="178" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="130" y1="168" x2="82" y2="270" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="535" y1="178" x2="598" y2="268" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="598" y1="268" x2="582" y2="388" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="582" y1="388" x2="452" y2="352" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="582" y1="388" x2="585" y2="538" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="335" y1="442" x2="200" y2="378" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="335" y1="442" x2="452" y2="352" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="335" y1="442" x2="178" y2="492" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="200" y1="378" x2="178" y2="492" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="585" y1="538" x2="585" y2="648" stroke="#2a2010" stroke-width="0.8" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="178" y1="492" x2="178" y2="580" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="178" y1="580" x2="120" y2="692" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="120" y1="692" x2="248" y2="770" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="248" y1="770" x2="390" y2="710" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="390" y1="710" x2="440" y2="800" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="248" y1="770" x2="165" y2="878" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="165" y1="878" x2="300" y2="875" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="300" y1="875" x2="440" y2="800" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="535" y1="668" x2="390" y2="710" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="535" y1="668" x2="440" y2="800" stroke="#2a2010" stroke-width="0.5" style="fill:rgb(0, 0, 0);stroke:rgb(42, 32, 16);color:rgb(255, 255, 255);stroke-width:0.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<!-- ponts -->
+<line x1="350" y1="140" x2="440" y2="800" stroke="#1a1008" stroke-width="0.3" stroke-dasharray="2 8" opacity="0.35" style="fill:rgb(0, 0, 0);stroke:rgb(26, 16, 8);color:rgb(255, 255, 255);stroke-width:0.3px;stroke-dasharray:2px, 8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="82" y1="270" x2="178" y2="580" stroke="#1a1008" stroke-width="0.3" stroke-dasharray="2 8" opacity="0.35" style="fill:rgb(0, 0, 0);stroke:rgb(26, 16, 8);color:rgb(255, 255, 255);stroke-width:0.3px;stroke-dasharray:2px, 8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ══ CERCLES ══ -->
+<circle cx="130" cy="168" r="78" fill="rgba(15,110,86,0.07)" stroke="#0F6E56" stroke-width="1.1" style="fill:rgba(15, 110, 86, 0.07);stroke:rgb(15, 110, 86);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="230" cy="130" r="78" fill="rgba(83,74,183,0.07)" stroke="#534AB7" stroke-width="1.1" style="fill:rgba(83, 74, 183, 0.07);stroke:rgb(83, 74, 183);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="350" cy="140" r="88" fill="rgba(186,117,23,0.08)" stroke="#BA7517" stroke-width="1.3" style="fill:rgba(186, 117, 23, 0.08);stroke:rgb(186, 117, 23);color:rgb(255, 255, 255);stroke-width:1.3px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="455" cy="95" r="70" fill="rgba(201,162,39,0.06)" stroke="#C9A227" stroke-width="1" style="fill:rgba(201, 162, 39, 0.06);stroke:rgb(201, 162, 39);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="535" cy="178" r="70" fill="rgba(212,83,126,0.06)" stroke="#D4537E" stroke-width="1" style="fill:rgba(212, 83, 126, 0.06);stroke:rgb(212, 83, 126);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="82" cy="270" r="78" fill="rgba(15,110,86,0.06)" stroke="#1D9E75" stroke-width="1" style="fill:rgba(15, 110, 86, 0.06);stroke:rgb(29, 158, 117);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="598" cy="268" r="70" fill="rgba(83,74,183,0.06)" stroke="#7F77DD" stroke-width="1" style="fill:rgba(83, 74, 183, 0.06);stroke:rgb(127, 119, 221);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="582" cy="388" r="80" fill="rgba(100,80,10,0.07)" stroke="#854F0B" stroke-width="1.1" style="fill:rgba(100, 80, 10, 0.07);stroke:rgb(133, 79, 11);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="335" cy="442" r="100" fill="rgba(201,162,39,0.08)" stroke="#C9A227" stroke-width="1.5" style="fill:rgba(201, 162, 39, 0.08);stroke:rgb(201, 162, 39);color:rgb(255, 255, 255);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="200" cy="378" r="80" fill="rgba(83,74,183,0.07)" stroke="#534AB7" stroke-width="1.1" style="fill:rgba(83, 74, 183, 0.07);stroke:rgb(83, 74, 183);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="452" cy="352" r="80" fill="rgba(153,60,29,0.07)" stroke="#993C1D" stroke-width="1.1" style="fill:rgba(153, 60, 29, 0.07);stroke:rgb(153, 60, 29);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="178" cy="492" r="78" fill="rgba(186,117,23,0.06)" stroke="#BA7517" stroke-width="1" style="fill:rgba(186, 117, 23, 0.06);stroke:rgb(186, 117, 23);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="585" cy="538" r="78" fill="rgba(15,110,86,0.07)" stroke="#0F6E56" stroke-width="1.1" style="fill:rgba(15, 110, 86, 0.07);stroke:rgb(15, 110, 86);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="585" cy="648" r="78" fill="rgba(186,117,23,0.07)" stroke="#BA7517" stroke-width="1.1" style="fill:rgba(186, 117, 23, 0.07);stroke:rgb(186, 117, 23);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="178" cy="580" r="70" fill="rgba(212,83,126,0.06)" stroke="#D4537E" stroke-width="1" style="fill:rgba(212, 83, 126, 0.06);stroke:rgb(212, 83, 126);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="120" cy="692" r="78" fill="rgba(83,74,183,0.07)" stroke="#7F77DD" stroke-width="1.1" style="fill:rgba(83, 74, 183, 0.07);stroke:rgb(127, 119, 221);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="248" cy="770" r="95" fill="rgba(100,15,15,0.09)" stroke="#791F1F" stroke-width="1.4" style="fill:rgba(100, 15, 15, 0.09);stroke:rgb(121, 31, 31);color:rgb(255, 255, 255);stroke-width:1.4px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="390" cy="710" r="88" fill="rgba(201,162,39,0.07)" stroke="#C9A227" stroke-width="1.2" style="fill:rgba(201, 162, 39, 0.07);stroke:rgb(201, 162, 39);color:rgb(255, 255, 255);stroke-width:1.2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="440" cy="800" r="88" fill="rgba(226,75,74,0.07)" stroke="#E24B4A" stroke-width="1.2" style="fill:rgba(226, 75, 74, 0.07);stroke:rgb(226, 75, 74);color:rgb(255, 255, 255);stroke-width:1.2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="165" cy="878" r="88" fill="rgba(153,60,29,0.08)" stroke="#993C1D" stroke-width="1.1" style="fill:rgba(153, 60, 29, 0.08);stroke:rgb(153, 60, 29);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="300" cy="875" r="80" fill="rgba(55,138,221,0.07)" stroke="#378ADD" stroke-width="1.1" style="fill:rgba(55, 138, 221, 0.07);stroke:rgb(55, 138, 221);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="535" cy="668" r="80" fill="rgba(55,138,221,0.06)" stroke="#378ADD" stroke-width="1.1" style="fill:rgba(55, 138, 221, 0.06);stroke:rgb(55, 138, 221);color:rgb(255, 255, 255);stroke-width:1.1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- ══ LABELS ══ -->
+<text font-size="9" fill="#0F6E56" x="130" y="164" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">L'Étoile · XVII</text>
+<text font-size="9" fill="#534AB7" x="230" y="126" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Lune · XVIII</text>
+<text font-size="10" fill="#BA7517" x="350" y="136" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(186, 117, 23);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:10px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Soleil · XIX</text>
+<text font-size="9" fill="#C9A227" x="455" y="91" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Fou · 0</text>
+<text font-size="9" fill="#D4537E" x="535" y="174" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(212, 83, 126);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Bateleur · I</text>
+<text font-size="8.5" fill="#1D9E75" x="82" y="266" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(29, 158, 117);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:8.5px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Tempérance · XIV</text>
+<text font-size="9" fill="#7F77DD" x="598" y="264" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(127, 119, 221);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Papesse · II</text>
+<text font-size="9" fill="#854F0B" x="582" y="384" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(133, 79, 11);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">L'Hermite · IX</text>
+<text font-size="11" fill="#C9A227" x="335" y="438" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:11px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Monde · XXI</text>
+<text font-size="9" fill="#534AB7" x="200" y="374" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(83, 74, 183);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Chariot · VII</text>
+<text font-size="9" fill="#993C1D" x="452" y="348" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(153, 60, 29);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Force · XI</text>
+<text font-size="9" fill="#BA7517" x="178" y="488" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(186, 117, 23);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Roue · X</text>
+<text font-size="9" fill="#0F6E56" x="585" y="534" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(15, 110, 86);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">L'Impératrice · III</text>
+<text font-size="9" fill="#BA7517" x="585" y="644" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(186, 117, 23);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">L'Empereur · IV</text>
+<text font-size="8.5" fill="#D4537E" x="178" y="576" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(212, 83, 126);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:8.5px;font-weight:400;text-anchor:middle;dominant-baseline:auto">L'Amoureux · VI</text>
+<text font-size="9" fill="#7F77DD" x="120" y="688" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(127, 119, 221);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Pendu · XII</text>
+<text font-size="11" fill="#791F1F" x="248" y="766" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(121, 31, 31);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:11px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Mort · XIII</text>
+<text font-size="10" fill="#C9A227" x="390" y="706" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:10px;font-weight:400;text-anchor:middle;dominant-baseline:auto">La Justice · VIII</text>
+<text font-size="10" fill="#E24B4A" x="440" y="796" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(226, 75, 74);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:10px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Jugement · XX</text>
+<text font-size="9" fill="#993C1D" x="165" y="874" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(153, 60, 29);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Diable · XV</text>
+<text font-size="9" fill="#378ADD" x="300" y="871" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(55, 138, 221);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Maison-Dieu · XVI</text>
+<text font-size="9" fill="#378ADD" x="535" y="664" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(55, 138, 221);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:9px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Le Pape · V</text>
+
+<!-- ══ ARCS TEXTE POUR CHAQUE INTERSECTION ══
+  Pour chaque paire, je trace un arc sur le cercle porteur,
+  centré sur l'angle vers le point d'intersection.
+  Arc de ±30° → longueur d'arc = 2*30°/360° * 2π*r ≈ r (environ r pixels)
+  
+  Formule : angle = atan2(py-cy, px-cx)
+  start = angle-30°, end = angle+30° (en radians)
+  Si l'arc est dans la moitié supérieure → sweep=1 (sens horaire, texte lisible)
+  Si l'arc est dans la moitié inférieure → sweep=0 (antihoraire) et on inverse start/end
+  
+  Je calcule chaque arc :
+-->
+<defs>
+
+<!-- A∩B : LE VOILE — arc sur A(130,168,r=78), vers B(230,130) 
+  angle=atan2(130-168,230-130)=atan2(-38,100)=-20.8° → haut droit → sweep=1
+  s=-50.8°=-0.887rad  e=9.2°=0.161rad
+  sx=130+78cos(-50.8°)=130+49.3=179.3  sy=168+78sin(-50.8°)=168-60.5=107.5
+  ex=130+78cos(9.2°)=130+77.0=207.0    ey=168+78sin(9.2°)=168+12.5=180.5 -->
+<path id="p-voile" d="M179.3 107.5 A78 78 0 0 1 207.0 180.5" fill="none"/>
+
+<!-- A∩F : LA SOURCE — arc sur A(130,168,r=78), vers F(82,270)
+  angle=atan2(270-168,82-130)=atan2(102,-48)=115.2° → bas gauche → sweep=0, inverser
+  s=85.2°  e=145.2°
+  sx=130+78cos(85.2°)=130+6.5=136.5   sy=168+78sin(85.2°)=168+77.7=245.7
+  ex=130+78cos(145.2°)=130-64.1=65.9  ey=168+78sin(145.2°)=168+44.6=212.6
+  sweep=0: M ex ey A r r 0 0 0 sx sy → M65.9 212.6 A78 78 0 0 0 136.5 245.7 -->
+<path id="p-source" d="M65.9 212.6 A78 78 0 0 0 136.5 245.7" fill="none"/>
+
+<!-- B∩C : L'AUBE — arc sur B(230,130,r=78), vers C(350,140)
+  angle=atan2(140-130,350-230)=atan2(10,120)=4.8° → droite légèrement bas → sweep=1
+  s=-25.2°  e=34.8°
+  sx=230+78cos(-25.2°)=230+70.6=300.6  sy=130+78sin(-25.2°)=130-33.2=96.8
+  ex=230+78cos(34.8°)=230+63.9=293.9   ey=130+78sin(34.8°)=130+44.7=174.7 -->
+<path id="p-aube" d="M300.6 96.8 A78 78 0 0 1 293.9 174.7" fill="none"/>
+
+<!-- C∩D : L'ÉCLAT — arc sur C(350,140,r=88), vers D(455,95)
+  angle=atan2(95-140,455-350)=atan2(-45,105)=-23.2° → haut droit → sweep=1
+  s=-53.2°  e=6.8°
+  sx=350+88cos(-53.2°)=350+52.8=402.8  sy=140+88sin(-53.2°)=140-70.4=69.6
+  ex=350+88cos(6.8°)=350+87.4=437.4    ey=140+88sin(6.8°)=140+10.4=150.4 -->
+<path id="p-eclat" d="M402.8 69.6 A88 88 0 0 1 437.4 150.4" fill="none"/>
+
+<!-- D∩E : LE GESTE — arc sur D(455,95,r=70), vers E(535,178)
+  angle=atan2(178-95,535-455)=atan2(83,80)=46.1° → bas droit → sweep=0, inverser
+  s=16.1°  e=76.1°
+  sx=455+70cos(16.1°)=455+67.3=522.3  sy=95+70sin(16.1°)=95+19.4=114.4
+  ex=455+70cos(76.1°)=455+16.8=471.8  ey=95+70sin(76.1°)=95+68.0=163.0
+  M471.8 163.0 A70 70 0 0 0 522.3 114.4 -->
+<path id="p-geste" d="M471.8 163.0 A70 70 0 0 0 522.3 114.4" fill="none"/>
+
+<!-- E∩G : L'ÉCRIT — arc sur E(535,178,r=70), vers G(598,268)
+  angle=atan2(268-178,598-535)=atan2(90,63)=55.1° → bas droit → sweep=0
+  s=25.1°  e=85.1°
+  sx=535+70cos(25.1°)=535+63.4=598.4  sy=178+70sin(25.1°)=178+29.6=207.6
+  ex=535+70cos(85.1°)=535+5.9=540.9   ey=178+70sin(85.1°)=178+69.8=247.8
+  M540.9 247.8 A70 70 0 0 0 598.4 207.6 -->
+<path id="p-ecrit" d="M540.9 247.8 A70 70 0 0 0 598.4 207.6" fill="none"/>
+
+<!-- G∩H : LE SILENCE — arc sur G(598,268,r=70), vers H(582,388)
+  angle=atan2(388-268,582-598)=atan2(120,-16)=97.6° → bas (quasi sud) → sweep=0
+  s=67.6°  e=127.6°
+  sx=598+70cos(67.6°)=598+26.6=624.6  sy=268+70sin(67.6°)=268+64.8=332.8
+  ex=598+70cos(127.6°)=598-42.7=555.3 ey=268+70sin(127.6°)=268+55.5=323.5
+  M555.3 323.5 A70 70 0 0 0 624.6 332.8 -->
+<path id="p-silence" d="M555.3 323.5 A70 70 0 0 0 624.6 332.8" fill="none"/>
+
+<!-- H∩K : LE POIDS — arc sur H(582,388,r=80), vers K(452,352)
+  angle=atan2(352-388,452-582)=atan2(-36,-130)=195.5° → gauche haut → sweep=1
+  s=165.5°  e=225.5°
+  sx=582+80cos(165.5°)=582-77.3=504.7  sy=388+80sin(165.5°)=388+20.2=408.2
+  ex=582+80cos(225.5°)=582-56.2=525.8  ey=388+80sin(225.5°)=388-57.0=331.0
+  sweep=1 de start à end (arc remonte) -->
+<path id="p-poids" d="M504.7 408.2 A80 80 0 0 1 525.8 331.0" fill="none"/>
+
+<!-- H∩M : L'ÉTHER — arc sur H(582,388,r=80), vers M(585,538)
+  angle=atan2(538-388,585-582)=atan2(150,3)=88.9° → plein sud → sweep=0
+  s=58.9°  e=118.9°
+  sx=582+80cos(58.9°)=582+41.3=623.3  sy=388+80sin(58.9°)=388+68.5=456.5
+  ex=582+80cos(118.9°)=582-38.6=543.4 ey=388+80sin(118.9°)=388+69.9=457.9
+  M543.4 457.9 A80 80 0 0 0 623.3 456.5 -->
+<path id="p-ether" d="M543.4 457.9 A80 80 0 0 0 623.3 456.5" fill="none"/>
+
+<!-- I∩J : LE VOYAGE — arc sur I(335,442,r=100), vers J(200,378)
+  angle=atan2(378-442,200-335)=atan2(-64,-135)=205.4° → haut gauche → sweep=1
+  s=175.4°  e=235.4°
+  sx=335+100cos(175.4°)=335-99.6=235.4  sy=442+100sin(175.4°)=442+8.0=450.0
+  ex=335+100cos(235.4°)=335-57.1=277.9  ey=442+100sin(235.4°)=442-82.0=360.0
+  sweep=1 -->
+<path id="p-voyage" d="M235.4 450.0 A100 100 0 0 1 277.9 360.0" fill="none"/>
+
+<!-- I∩K : L'ANCRE — arc sur I(335,442,r=100), vers K(452,352)
+  angle=atan2(352-442,452-335)=atan2(-90,117)=-37.6° → haut droit → sweep=1
+  s=-67.6°  e=-7.6°
+  sx=335+100cos(-67.6°)=335+38.0=373.0  sy=442+100sin(-67.6°)=442-92.4=349.6
+  ex=335+100cos(-7.6°)=335+99.1=434.1   ey=442+100sin(-7.6°)=442-13.2=428.8 -->
+<path id="p-ancre" d="M373.0 349.6 A100 100 0 0 1 434.1 428.8" fill="none"/>
+
+<!-- I∩L : L'AXE — arc sur I(335,442,r=100), vers L(178,492)
+  angle=atan2(492-442,178-335)=atan2(50,-157)=162.3° → gauche légèrement bas → sweep=1
+  s=132.3°  e=192.3°
+  sx=335+100cos(132.3°)=335-67.4=267.6  sy=442+100sin(132.3°)=442+73.9=515.9
+  ex=335+100cos(192.3°)=335-97.7=237.3  ey=442+100sin(192.3°)=442-21.3=420.7
+  sweep=1 (de bas vers haut) -->
+<path id="p-axe" d="M267.6 515.9 A100 100 0 0 1 237.3 420.7" fill="none"/>
+
+<!-- J∩L : LE TOUR — arc sur J(200,378,r=80), vers L(178,492)
+  angle=atan2(492-378,178-200)=atan2(114,-22)=100.9° → bas gauche → sweep=0
+  s=70.9°  e=130.9°
+  sx=200+80cos(70.9°)=200+26.3=226.3  sy=378+80sin(70.9°)=378+75.6=453.6
+  ex=200+80cos(130.9°)=200-52.4=147.6 ey=378+80sin(130.9°)=378+60.4=438.4
+  M147.6 438.4 A80 80 0 0 0 226.3 453.6 -->
+<path id="p-tour" d="M147.6 438.4 A80 80 0 0 0 226.3 453.6" fill="none"/>
+
+<!-- M∩N : LE SCEAU — arc sur M(585,538,r=78), vers N(585,648)
+  angle=atan2(648-538,585-585)=90° → plein sud → sweep=0
+  s=60°  e=120°
+  sx=585+78cos(60°)=585+39=624   sy=538+78sin(60°)=538+67.5=605.5
+  ex=585+78cos(120°)=585-39=546  ey=538+78sin(120°)=538+67.5=605.5
+  M546 605.5 A78 78 0 0 0 624 605.5 -->
+<path id="p-sceau" d="M546 605.5 A78 78 0 0 0 624 605.5" fill="none"/>
+
+<!-- L∩O : LE CARREFOUR — arc sur L(178,492,r=78), vers O(178,580)
+  angle=atan2(580-492,178-178)=90° → plein sud → sweep=0
+  s=60°  e=120°
+  sx=178+78cos(60°)=178+39=217    sy=492+78sin(60°)=492+67.5=559.5
+  ex=178+78cos(120°)=178-39=139   ey=492+78sin(120°)=492+67.5=559.5
+  M139 559.5 A78 78 0 0 0 217 559.5 -->
+<path id="p-carrefour" d="M139 559.5 A78 78 0 0 0 217 559.5" fill="none"/>
+
+<!-- O∩P : L'ATTENTE — arc sur O(178,580,r=70), vers P(120,692)
+  angle=atan2(692-580,120-178)=atan2(112,-58)=117.4° → bas gauche → sweep=0
+  s=87.4°  e=147.4°
+  sx=178+70cos(87.4°)=178+3.1=181.1  sy=580+70sin(87.4°)=580+69.9=649.9
+  ex=178+70cos(147.4°)=178-58.9=119.1 ey=580+70sin(147.4°)=580+37.8=617.8
+  M119.1 617.8 A70 70 0 0 0 181.1 649.9 -->
+<path id="p-attente" d="M119.1 617.8 A70 70 0 0 0 181.1 649.9" fill="none"/>
+
+<!-- P∩Q : LA CHUTE — arc sur P(120,692,r=78), vers Q(248,770)
+  angle=atan2(770-692,248-120)=atan2(78,128)=31.3° → bas droit → sweep=0
+  s=1.3°  e=61.3°
+  sx=120+78cos(1.3°)=120+78.0=198.0  sy=692+78sin(1.3°)=692+1.8=693.8
+  ex=120+78cos(61.3°)=120+37.5=157.5 ey=692+78sin(61.3°)=692+68.3=760.3
+  M157.5 760.3 A78 78 0 0 0 198.0 693.8 -->
+<path id="p-chute" d="M157.5 760.3 A78 78 0 0 0 198.0 693.8" fill="none"/>
+
+<!-- Q∩R : LA SENTENCE — arc sur Q(248,770,r=95), vers R(390,710)
+  angle=atan2(710-770,390-248)=atan2(-60,142)=-22.9° → haut droit → sweep=1
+  s=-52.9°  e=7.1°
+  sx=248+95cos(-52.9°)=248+57.3=305.3  sy=770+95sin(-52.9°)=770-75.9=694.1
+  ex=248+95cos(7.1°)=248+94.3=342.3    ey=770+95sin(7.1°)=770+11.7=781.7 -->
+<path id="p-sentence" d="M305.3 694.1 A95 95 0 0 1 342.3 781.7" fill="none"/>
+
+<!-- R∩S : L'APPEL — arc sur R(390,710,r=88), vers S(440,800)
+  angle=atan2(800-710,440-390)=atan2(90,50)=60.9° → bas droit → sweep=0
+  s=30.9°  e=90.9°
+  sx=390+88cos(30.9°)=390+75.5=465.5  sy=710+88sin(30.9°)=710+45.2=755.2
+  ex=390+88cos(90.9°)=390-1.4=388.6   ey=710+88sin(90.9°)=710+88.0=798.0
+  M388.6 798.0 A88 88 0 0 0 465.5 755.2 -->
+<path id="p-appel" d="M388.6 798.0 A88 88 0 0 0 465.5 755.2" fill="none"/>
+
+<!-- Q∩T : LA CHAÎNE — arc sur Q(248,770,r=95), vers T(165,878)
+  angle=atan2(878-770,165-248)=atan2(108,-83)=127.5° → bas gauche → sweep=0
+  s=97.5°  e=157.5°
+  sx=248+95cos(97.5°)=248-12.5=235.5  sy=770+95sin(97.5°)=770+94.2=864.2
+  ex=248+95cos(157.5°)=248-87.7=160.3 ey=770+95sin(157.5°)=770+36.2=806.2
+  M160.3 806.2 A95 95 0 0 0 235.5 864.2 -->
+<path id="p-chaine" d="M160.3 806.2 A95 95 0 0 0 235.5 864.2" fill="none"/>
+
+<!-- T∩U : L'EFFONDREMENT — arc sur T(165,878,r=88), vers U(300,875)
+  angle=atan2(875-878,300-165)=atan2(-3,135)=-1.3° → droite → sweep=1
+  s=-31.3°  e=28.7°
+  sx=165+88cos(-31.3°)=165+75.2=240.2  sy=878+88sin(-31.3°)=878-45.8=832.2
+  ex=165+88cos(28.7°)=165+77.1=242.1   ey=878+88sin(28.7°)=878+42.3=920.3
+  haut droite → sweep=1 -->
+<path id="p-effondrement" d="M240.2 832.2 A88 88 0 0 1 242.1 920.3" fill="none"/>
+
+<!-- U∩S : LE RÉVEIL — arc sur U(300,875,r=80), vers S(440,800)
+  angle=atan2(800-875,440-300)=atan2(-75,140)=-28.2° → haut droit → sweep=1
+  s=-58.2°  e=1.8°
+  sx=300+80cos(-58.2°)=300+42.3=342.3  sy=875+80sin(-58.2°)=875-68.1=806.9
+  ex=300+80cos(1.8°)=300+80.0=380.0    ey=875+80sin(1.8°)=875+2.5=877.5 -->
+<path id="p-reveil" d="M342.3 806.9 A80 80 0 0 1 380.0 877.5" fill="none"/>
+
+<!-- V∩R : LA LOI — arc sur V(535,668,r=80), vers R(390,710)
+  angle=atan2(710-668,390-535)=atan2(42,-145)=163.8° → gauche bas → sweep=1
+  s=133.8°  e=193.8°
+  sx=535+80cos(133.8°)=535-55.6=479.4  sy=668+80sin(133.8°)=668+57.6=725.6
+  ex=535+80cos(193.8°)=535-77.8=457.2  ey=668+80sin(193.8°)=668-19.2=648.8
+  sweep=1 (remonte) -->
+<path id="p-loi" d="M479.4 725.6 A80 80 0 0 1 457.2 648.8" fill="none"/>
+
+<!-- V∩S : L'ABSOLUTION — arc sur V(535,668,r=80), vers S(440,800)
+  angle=atan2(800-668,440-535)=atan2(132,-95)=125.7° → bas gauche → sweep=0
+  s=95.7°  e=155.7°
+  sx=535+80cos(95.7°)=535-7.9=527.1   sy=668+80sin(95.7°)=668+79.6=747.6
+  ex=535+80cos(155.7°)=535-72.8=462.2 ey=668+80sin(155.7°)=668+33.0=701.0
+  M462.2 701.0 A80 80 0 0 0 527.1 747.6 -->
+<path id="p-absolution" d="M462.2 701.0 A80 80 0 0 0 527.1 747.6" fill="none"/>
+
+</defs>
+
+<!-- ══ TEXTES EN ARC ══ -->
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-voile" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE VOILE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-source" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LA SOURCE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-aube" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'AUBE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-eclat" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ÉCLAT</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-geste" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE GESTE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-ecrit" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ÉCRIT</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-silence" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE SILENCE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-poids" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE POIDS</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-ether" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ÉTHER</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-voyage" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE VOYAGE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-ancre" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ANCRE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-axe" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'AXE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-tour" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE TOUR</textPath></text>
+<text font-size="8" fill="#f0d878" font-family="Georgia,serif" letter-spacing="2" style="fill:rgb(240, 216, 120);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:8px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-sceau" style="fill:rgb(240, 216, 120);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:8px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE SCEAU</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-carrefour" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE CARREFOUR</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-attente" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ATTENTE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-chute" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LA CHUTE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-sentence" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LA SENTENCE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-appel" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'APPEL</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-chaine" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LA CHAÎNE</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-effondrement" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'EFFONDREMENT</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-reveil" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LE RÉVEIL</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-loi" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">LA LOI</textPath></text>
+<text font-size="7" fill="#C9A227" font-family="Georgia,serif" letter-spacing="1.5" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto"><textPath href="#p-absolution" style="fill:rgb(201, 162, 39);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:start;dominant-baseline:auto">L'ABSOLUTION</textPath></text>
+
+<!-- ponts -->
+<line x1="350" y1="140" x2="440" y2="800" stroke="#1a1008" stroke-width="0.3" stroke-dasharray="2 8" opacity="0.3" style="fill:rgb(0, 0, 0);stroke:rgb(26, 16, 8);color:rgb(255, 255, 255);stroke-width:0.3px;stroke-dasharray:2px, 8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.3;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<line x1="82" y1="270" x2="178" y2="580" stroke="#1a1008" stroke-width="0.3" stroke-dasharray="2 8" opacity="0.3" style="fill:rgb(0, 0, 0);stroke:rgb(26, 16, 8);color:rgb(255, 255, 255);stroke-width:0.3px;stroke-dasharray:2px, 8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.3;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<text font-size="7" fill="#3a2808" x="340" y="998" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(58, 40, 8);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:7px;font-weight:400;text-anchor:middle;dominant-baseline:auto">24 intersections nommées en arc · chaque nom suit la courbure de son cercle porteur</text>
+<text font-size="6.5" fill="#2a1808" x="340" y="1012" text-anchor="middle" font-family="Georgia,serif" style="fill:rgb(42, 24, 8);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:6.5px;font-weight:400;text-anchor:middle;dominant-baseline:auto">Format physique recommandé : 80×100 cm · impression sérigraphie sur carton noir</text>
+
+</svg>
