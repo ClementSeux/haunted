@@ -485,8 +485,306 @@ header h1 {
 <!-- ══════════ PLATEAU ══════════ -->
 <div id="tab-plateau" class="tab-panel">
 
+<!-- ══ PLATEAU INTÉRIEUR DU GARDIEN ══ -->
+<div class="plateau-wrap" style="margin-bottom:32px">
+  <p class="plateau-label">— PLATEAU INTÉRIEUR · LE GARDIEN SEUL LE VOIT · POSER LES PUNAISES SUR LES DISQUES —</p>
+  <svg width="100%" viewBox="0 0 680 1020" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="gBgInt" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="#0a0e14"/>
+        <stop offset="100%" stop-color="#04060a"/>
+      </radialGradient>
+      <filter id="gGlowInt"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="gGlowSoftInt"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+
+      <!-- Arcs textPath — identiques au couvercle -->
+      <path id="pi-voile"        d="M179.3 107.5 A78 78 0 0 1 207.0 180.5" fill="none"/>
+      <path id="pi-source"       d="M65.9 212.6 A78 78 0 0 0 136.5 245.7" fill="none"/>
+      <path id="pi-aube"         d="M300.6 96.8 A78 78 0 0 1 293.9 174.7" fill="none"/>
+      <path id="pi-eclat"        d="M402.8 69.6 A88 88 0 0 1 437.4 150.4" fill="none"/>
+      <path id="pi-geste"        d="M471.8 163.0 A70 70 0 0 0 522.3 114.4" fill="none"/>
+      <path id="pi-ecrit"        d="M540.9 247.8 A70 70 0 0 0 598.4 207.6" fill="none"/>
+      <path id="pi-silence"      d="M555.3 323.5 A70 70 0 0 0 624.6 332.8" fill="none"/>
+      <path id="pi-poids"        d="M504.7 408.2 A80 80 0 0 1 525.8 331.0" fill="none"/>
+      <path id="pi-ether"        d="M543.4 457.9 A80 80 0 0 0 623.3 456.5" fill="none"/>
+      <path id="pi-voyage"       d="M235.4 450.0 A100 100 0 0 1 277.9 360.0" fill="none"/>
+      <path id="pi-ancre"        d="M373.0 349.6 A100 100 0 0 1 434.1 428.8" fill="none"/>
+      <path id="pi-axe"          d="M267.6 515.9 A100 100 0 0 1 237.3 420.7" fill="none"/>
+      <path id="pi-tour"         d="M147.6 438.4 A80 80 0 0 0 226.3 453.6" fill="none"/>
+      <path id="pi-sceau"        d="M546 605.5 A78 78 0 0 0 624 605.5" fill="none"/>
+      <path id="pi-carrefour"    d="M139 559.5 A78 78 0 0 0 217 559.5" fill="none"/>
+      <path id="pi-attente"      d="M119.1 617.8 A70 70 0 0 0 181.1 649.9" fill="none"/>
+      <path id="pi-chute"        d="M157.5 760.3 A78 78 0 0 0 198.0 693.8" fill="none"/>
+      <path id="pi-sentence"     d="M305.3 694.1 A95 95 0 0 1 342.3 781.7" fill="none"/>
+      <path id="pi-appel"        d="M388.6 798.0 A88 88 0 0 0 465.5 755.2" fill="none"/>
+      <path id="pi-chaine"       d="M160.3 806.2 A95 95 0 0 0 235.5 864.2" fill="none"/>
+      <path id="pi-effondrement" d="M240.2 832.2 A88 88 0 0 1 242.1 920.3" fill="none"/>
+      <path id="pi-reveil"       d="M342.3 806.9 A80 80 0 0 1 380.0 877.5" fill="none"/>
+      <path id="pi-loi"          d="M479.4 725.6 A80 80 0 0 1 457.2 648.8" fill="none"/>
+      <path id="pi-absolution"   d="M462.2 701.0 A80 80 0 0 0 527.1 747.6" fill="none"/>
+    </defs>
+
+    <rect x="0" y="0" width="680" height="1020" rx="16" fill="url(#gBgInt)"/>
+    <rect x="5" y="5" width="670" height="1010" rx="13" fill="none" stroke="#1a2a1a" stroke-width="0.5" stroke-dasharray="6 4"/>
+
+    <!-- Liens -->
+    <g stroke="#1a2a10" stroke-width="0.6" fill="none" opacity="0.5">
+      <line x1="130" y1="168" x2="230" y2="130"/>
+      <line x1="230" y1="130" x2="350" y2="140"/>
+      <line x1="350" y1="140" x2="455" y2="95"/>
+      <line x1="455" y1="95"  x2="535" y2="178"/>
+      <line x1="130" y1="168" x2="82"  y2="270"/>
+      <line x1="535" y1="178" x2="598" y2="268"/>
+      <line x1="598" y1="268" x2="582" y2="388"/>
+      <line x1="582" y1="388" x2="452" y2="352"/>
+      <line x1="582" y1="388" x2="585" y2="538"/>
+      <line x1="335" y1="442" x2="200" y2="378"/>
+      <line x1="335" y1="442" x2="452" y2="352"/>
+      <line x1="335" y1="442" x2="178" y2="492"/>
+      <line x1="200" y1="378" x2="178" y2="492"/>
+      <line x1="585" y1="538" x2="585" y2="648"/>
+      <line x1="178" y1="492" x2="178" y2="580"/>
+      <line x1="178" y1="580" x2="120" y2="692"/>
+      <line x1="120" y1="692" x2="248" y2="770"/>
+      <line x1="248" y1="770" x2="390" y2="710"/>
+      <line x1="390" y1="710" x2="440" y2="800"/>
+      <line x1="248" y1="770" x2="165" y2="878"/>
+      <line x1="165" y1="878" x2="300" y2="875"/>
+      <line x1="300" y1="875" x2="440" y2="800"/>
+      <line x1="535" y1="668" x2="390" y2="710"/>
+      <line x1="535" y1="668" x2="440" y2="800"/>
+    </g>
+
+    <!-- Cercles — même géométrie, remplis légèrement différents -->
+    <g filter="url(#gGlowSoftInt)">
+      <circle cx="130" cy="168" r="78"  fill="rgba(15,110,86,0.05)"   stroke="#0F6E56" stroke-width="0.8"/>
+      <circle cx="230" cy="130" r="78"  fill="rgba(83,74,183,0.05)"   stroke="#534AB7" stroke-width="0.8"/>
+      <circle cx="350" cy="140" r="88"  fill="rgba(186,117,23,0.05)"  stroke="#BA7517" stroke-width="0.9"/>
+      <circle cx="455" cy="95"  r="70"  fill="rgba(201,162,39,0.04)"  stroke="#C9A227" stroke-width="0.8"/>
+      <circle cx="535" cy="178" r="70"  fill="rgba(212,83,126,0.04)"  stroke="#D4537E" stroke-width="0.8"/>
+      <circle cx="82"  cy="270" r="78"  fill="rgba(15,110,86,0.04)"   stroke="#1D9E75" stroke-width="0.8"/>
+      <circle cx="598" cy="268" r="70"  fill="rgba(83,74,183,0.04)"   stroke="#7F77DD" stroke-width="0.8"/>
+      <circle cx="582" cy="388" r="80"  fill="rgba(100,80,10,0.05)"   stroke="#854F0B" stroke-width="0.8"/>
+      <circle cx="335" cy="442" r="100" fill="rgba(201,162,39,0.05)"  stroke="#C9A227" stroke-width="1"/>
+      <circle cx="200" cy="378" r="80"  fill="rgba(83,74,183,0.05)"   stroke="#534AB7" stroke-width="0.8"/>
+      <circle cx="452" cy="352" r="80"  fill="rgba(153,60,29,0.05)"   stroke="#993C1D" stroke-width="0.8"/>
+      <circle cx="178" cy="492" r="78"  fill="rgba(186,117,23,0.04)"  stroke="#BA7517" stroke-width="0.8"/>
+      <circle cx="585" cy="538" r="78"  fill="rgba(15,110,86,0.05)"   stroke="#0F6E56" stroke-width="0.8"/>
+      <circle cx="585" cy="648" r="78"  fill="rgba(186,117,23,0.05)"  stroke="#BA7517" stroke-width="0.8"/>
+      <circle cx="178" cy="580" r="70"  fill="rgba(212,83,126,0.04)"  stroke="#D4537E" stroke-width="0.8"/>
+      <circle cx="120" cy="692" r="78"  fill="rgba(83,74,183,0.05)"   stroke="#7F77DD" stroke-width="0.8"/>
+      <circle cx="248" cy="770" r="95"  fill="rgba(100,15,15,0.06)"   stroke="#791F1F" stroke-width="1"/>
+      <circle cx="390" cy="710" r="88"  fill="rgba(201,162,39,0.05)"  stroke="#C9A227" stroke-width="0.9"/>
+      <circle cx="440" cy="800" r="88"  fill="rgba(226,75,74,0.05)"   stroke="#E24B4A" stroke-width="0.9"/>
+      <circle cx="165" cy="878" r="88"  fill="rgba(153,60,29,0.05)"   stroke="#993C1D" stroke-width="0.8"/>
+      <circle cx="300" cy="875" r="80"  fill="rgba(55,138,221,0.05)"  stroke="#378ADD" stroke-width="0.8"/>
+      <circle cx="535" cy="668" r="80"  fill="rgba(55,138,221,0.04)"  stroke="#378ADD" stroke-width="0.8"/>
+    </g>
+
+    <!-- Synonymes pratiques à la place des noms d'arcanes -->
+    <!-- Chaque cercle reçoit 2-3 lignes de mots-clés pratico-pratiques -->
+    <g font-family="Georgia,serif" text-anchor="middle" font-style="italic">
+      <!-- L'Étoile (130,168) : LUMIÈRE·ÉTHER → lumineux, transparent, reflète -->
+      <text font-size="7.5" fill="#3a6a50" x="130" y="158">lumineux · transparent</text>
+      <text font-size="7.5" fill="#3a6a50" x="130" y="170">capte · reflète · verre</text>
+      <text font-size="7.5" fill="#3a6a50" x="130" y="182">exposé · mystérieux</text>
+
+      <!-- La Lune (230,130) : ÉTHER·INTIMITÉ → obscur, nuit, sommeil, chambre -->
+      <text font-size="7.5" fill="#3a3070" x="230" y="120">obscur · chambre · nuit</text>
+      <text font-size="7.5" fill="#3a3070" x="230" y="132">sommeil · caché · privé</text>
+      <text font-size="7.5" fill="#3a3070" x="230" y="144">intime · onirique</text>
+
+      <!-- Le Soleil (350,140) : LUMIÈRE·COMMUN → visible, rayonne, exposé, salon -->
+      <text font-size="8" fill="#6a5010" x="350" y="128">visible · rayonne · trône</text>
+      <text font-size="8" fill="#6a5010" x="350" y="142">salon · cuisine · hall</text>
+      <text font-size="8" fill="#6a5010" x="350" y="156">vu de tous · commun</text>
+
+      <!-- Le Fou (455,95) : AIR·MOBILE → déplacé, hors-place, léger, entre-deux -->
+      <text font-size="7.5" fill="#6a5010" x="455" y="82">déplacé · hors de sa place</text>
+      <text font-size="7.5" fill="#6a5010" x="455" y="94">léger · oublié · tombé</text>
+      <text font-size="7.5" fill="#6a5010" x="455" y="106">entre-deux · seuil · poche</text>
+
+      <!-- Le Bateleur (535,178) : MOBILE·LOI → outil, actionnable, geste précis -->
+      <text font-size="7.5" fill="#6a304a" x="535" y="165">outil · s'actionne · tourne</text>
+      <text font-size="7.5" fill="#6a304a" x="535" y="177">geste précis · mains</text>
+      <text font-size="7.5" fill="#6a304a" x="535" y="189">règle d'usage · mode d'emploi</text>
+
+      <!-- Tempérance (82,270) : EAU·SOIN → liquide, verse, dose, hygiène -->
+      <text font-size="7.5" fill="#1a5a40" x="82" y="257">liquide · verse · filtre</text>
+      <text font-size="7.5" fill="#1a5a40" x="82" y="269">soin · hygiène · santé</text>
+      <text font-size="7.5" fill="#1a5a40" x="82" y="281">dose · mesure · remédie</text>
+
+      <!-- La Papesse (598,268) : SAVOIR·INTIMITÉ → texte, écrit, fermé, secret -->
+      <text font-size="7.5" fill="#3a3070" x="598" y="255">texte · écrit · information</text>
+      <text font-size="7.5" fill="#3a3070" x="598" y="267">fermé · secret · protégé</text>
+      <text font-size="7.5" fill="#3a3070" x="598" y="279">jamais montré · intime</text>
+
+      <!-- L'Hermite (582,388) : PROFONDEUR·PASSÉ → isolé, ancien, usé, fond tiroir -->
+      <text font-size="7.5" fill="#5a3a08" x="582" y="375">isolé · retiré · oublié</text>
+      <text font-size="7.5" fill="#5a3a08" x="582" y="387">ancien · usé · patiné</text>
+      <text font-size="7.5" fill="#5a3a08" x="582" y="399">fond d'un tiroir · planqué</text>
+
+      <!-- Le Monde (335,442) : TERRE·SEUIL → ancré, central, indispensable -->
+      <text font-size="8" fill="#8a6010" x="335" y="428">ancré au sol · central</text>
+      <text font-size="8" fill="#8a6010" x="335" y="442">indispensable · frontière</text>
+      <text font-size="8" fill="#8a6010" x="335" y="456">pierre · dense · durable</text>
+
+      <!-- Le Chariot (200,378) : MOBILE·SEUIL → se déplace, près de la porte, emporté -->
+      <text font-size="7.5" fill="#3a3070" x="200" y="365">se déplace · emporté</text>
+      <text font-size="7.5" fill="#3a3070" x="200" y="377">près d'une porte · entrée</text>
+      <text font-size="7.5" fill="#3a3070" x="200" y="389">passage · pose en arrivant</text>
+
+      <!-- La Force (452,352) : LOURD·VIVANT → lourd, solide, bois, cuir, noble -->
+      <text font-size="7.5" fill="#6a3010" x="452" y="339">lourd · solide · résistant</text>
+      <text font-size="7.5" fill="#6a3010" x="452" y="351">bois · pierre · métal · os</text>
+      <text font-size="7.5" fill="#6a3010" x="452" y="363">ne se déplace pas · massif</text>
+
+      <!-- La Roue (178,492) : MOBILE·PASSÉ → cycle, répétition, tourne, quotidien -->
+      <text font-size="7.5" fill="#6a5010" x="178" y="479">tourne · oscille · cycle</text>
+      <text font-size="7.5" fill="#6a5010" x="178" y="491">répétition · quotidien</text>
+      <text font-size="7.5" fill="#6a5010" x="178" y="503">heure fixe · depuis toujours</text>
+
+      <!-- L'Impératrice (585,538) : VIVANT·SOIN → organique, naturel, cuir, tissu -->
+      <text font-size="7.5" fill="#1a5a40" x="585" y="524">organique · naturel · beau</text>
+      <text font-size="7.5" fill="#1a5a40" x="585" y="536">bois · cuir · tissu · plante</text>
+      <text font-size="7.5" fill="#1a5a40" x="585" y="548">soin · bien-être · entretenu</text>
+
+      <!-- L'Empereur (585,648) : LOI·LOURD → rigide, règle, inscrit, bureau -->
+      <text font-size="7.5" fill="#6a5010" x="585" y="634">rigide · règle · autorité</text>
+      <text font-size="7.5" fill="#6a5010" x="585" y="646">inscription · officiel · lourd</text>
+      <text font-size="7.5" fill="#6a5010" x="585" y="658">bureau · immuable · ferme</text>
+
+      <!-- L'Amoureux (178,580) : LIEN·INTIMITÉ → donné, reçu, affectif, double -->
+      <text font-size="7.5" fill="#6a304a" x="178" y="567">donné · reçu · lié à quelqu'un</text>
+      <text font-size="7.5" fill="#6a304a" x="178" y="579">affectif · double · en paire</text>
+      <text font-size="7.5" fill="#6a304a" x="178" y="591">souvenir d'une relation</text>
+
+      <!-- Le Pendu (120,692) : HAUTEUR·LIEN → accroché, suspendu, fil, temporaire -->
+      <text font-size="7.5" fill="#3a3070" x="120" y="679">accroché · suspendu · haut</text>
+      <text font-size="7.5" fill="#3a3070" x="120" y="691">fil · corde · crochet · agrafe</text>
+      <text font-size="7.5" fill="#3a3070" x="120" y="703">mis là temporairement</text>
+
+      <!-- La Mort (248,770) : MORT·FRAGILE → deuil, froid, culpabilité, verre -->
+      <text font-size="8" fill="#5a1a1a" x="248" y="754">deuil · souvenir · absent</text>
+      <text font-size="8" fill="#5a1a1a" x="248" y="768">froid · sombre · garde-le</text>
+      <text font-size="8" fill="#5a1a1a" x="248" y="782">verre · porcelaine · fragile</text>
+
+      <!-- La Justice (390,710) : TRANCHANT·LOI → coupe, lame, droit, autorité -->
+      <text font-size="8" fill="#6a6010" x="390" y="697">coupe · tranche · lame · bord</text>
+      <text font-size="8" fill="#6a6010" x="390" y="711">règle · droit · ferme · interdit</text>
+      <text font-size="8" fill="#6a6010" x="390" y="725">endroit officiel · deux faces</text>
+
+      <!-- Le Jugement (440,800) : MORT·SONORE → bruit, sonne, vibre, appelle -->
+      <text font-size="8" fill="#6a1a1a" x="440" y="786">bruit · sonne · vibre · signal</text>
+      <text font-size="8" fill="#6a1a1a" x="440" y="800">appelle · interrompt · alarme</text>
+      <text font-size="8" fill="#6a1a1a" x="440" y="814">à piles · mécanique · lié au deuil</text>
+
+      <!-- Le Diable (165,878) : FEU·TRANCHANT → brûle, chauffe, électrique, dépendance -->
+      <text font-size="7.5" fill="#6a3010" x="165" y="864">brûle · chauffe · électrique</text>
+      <text font-size="7.5" fill="#6a3010" x="165" y="876">chaleur · consume · tranche</text>
+      <text font-size="7.5" fill="#6a3010" x="165" y="888">dépendance · ne peut s'en défaire</text>
+
+      <!-- Maison-Dieu (300,875) : FRAGILE·SEUIL → brisé, fêlé, porte, vulnérable -->
+      <text font-size="7.5" fill="#1a4a6a" x="300" y="861">brisé · fêlé · fissuré · réparé</text>
+      <text font-size="7.5" fill="#1a4a6a" x="300" y="873">près d'une porte · fenêtre</text>
+      <text font-size="7.5" fill="#1a4a6a" x="300" y="885">vulnérable · n'aurait pas dû rester</text>
+
+      <!-- Le Pape (535,668) : SAVOIR·COMMUN → hérité, transmis, rite, solennel -->
+      <text font-size="7.5" fill="#1a4a6a" x="535" y="654">hérité · transmis · ancestral</text>
+      <text font-size="7.5" fill="#1a4a6a" x="535" y="666">rite · solennel · cérémoniel</text>
+      <text font-size="7.5" fill="#1a4a6a" x="535" y="678">visible de tous · on ne bouge pas</text>
+    </g>
+
+    <!-- Disques d'intersection — agrandis, fond pour poser la punaise -->
+    <!-- Chaque disque = une zone où le Gardien peut poser une punaise -->
+    <g filter="url(#gGlowInt)">
+      <!-- LE VOILE : Étoile∩Lune (183,143) -->
+      <circle cx="183" cy="143" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'AUBE : Lune∩Soleil (295,137) -->
+      <circle cx="295" cy="137" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ÉCLAT : Soleil∩Fou (408,122) -->
+      <circle cx="408" cy="122" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE GESTE : Fou∩Bateleur (495,137) -->
+      <circle cx="495" cy="137" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LA SOURCE : Étoile∩Tempérance (110,215) -->
+      <circle cx="110" cy="215" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ÉCRIT : Bateleur∩Papesse (560,222) -->
+      <circle cx="560" cy="222" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE SILENCE : Papesse∩Hermite (585,330) -->
+      <circle cx="585" cy="330" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE POIDS : Hermite∩Force (515,370) -->
+      <circle cx="515" cy="370" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ÉTHER : Hermite∩Impératrice (583,463) -->
+      <circle cx="583" cy="463" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE VOYAGE : Monde∩Chariot (275,400) -->
+      <circle cx="275" cy="400" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ANCRE : Monde∩Force (395,390) -->
+      <circle cx="395" cy="390" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE TOUR : Chariot∩Roue (193,425) -->
+      <circle cx="193" cy="425" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'AXE : Monde∩Roue (258,455) -->
+      <circle cx="258" cy="455" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE SCEAU : Impératrice∩Empereur (585,593) — plus grand, unique -->
+      <circle cx="585" cy="593" r="15" fill="#0a0e14" stroke="#f0d878" stroke-width="2"/>
+      <!-- LE CARREFOUR : Roue∩Amoureux (178,536) -->
+      <circle cx="178" cy="536" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE LIEN : Monde∩Amoureux (258,500) -->
+      <circle cx="258" cy="500" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ATTENTE : Amoureux∩Pendu (149,636) -->
+      <circle cx="149" cy="636" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LA CHUTE : Pendu∩Mort (184,731) -->
+      <circle cx="184" cy="731" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LA SENTENCE : Mort∩Justice (319,740) -->
+      <circle cx="319" cy="740" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'APPEL : Justice∩Jugement (415,755) -->
+      <circle cx="415" cy="755" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LA CHAÎNE : Mort∩Diable (206,824) -->
+      <circle cx="206" cy="824" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'EFFONDREMENT : Diable∩Maison (232,876) -->
+      <circle cx="232" cy="876" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LE RÉVEIL : Maison∩Jugement (370,837) -->
+      <circle cx="370" cy="837" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- LA LOI : Pape∩Justice (462,689) -->
+      <circle cx="462" cy="689" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+      <!-- L'ABSOLUTION : Pape∩Jugement (499,729) -->
+      <circle cx="499" cy="729" r="12" fill="#0a0e14" stroke="#C9A227" stroke-width="1.5"/>
+    </g>
+
+    <!-- Noms des intersections en arc — plus grands que le couvercle -->
+    <g font-family="Georgia,serif" letter-spacing="1.5" filter="url(#gGlowInt)">
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-voile">LE VOILE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-source">LA SOURCE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-aube">L'AUBE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-eclat">L'ÉCLAT</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-geste">LE GESTE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-ecrit">L'ÉCRIT</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-silence">LE SILENCE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-poids">LE POIDS</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-ether">L'ÉTHER</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-voyage">LE VOYAGE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-ancre">L'ANCRE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-axe">L'AXE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-tour">LE TOUR</textPath></text>
+      <text font-size="9" fill="#f0d878"><textPath href="#pi-sceau">LE SCEAU</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-carrefour">LE CARREFOUR</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-attente">L'ATTENTE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-chute">LA CHUTE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-sentence">LA SENTENCE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-appel">L'APPEL</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-chaine">LA CHAÎNE</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-effondrement">L'EFFONDREMENT</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-reveil">LE RÉVEIL</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-loi">LA LOI</textPath></text>
+      <text font-size="8" fill="#C9A227"><textPath href="#pi-absolution">L'ABSOLUTION</textPath></text>
+    </g>
+
+    <text font-size="7" fill="#2a3a2a" x="340" y="1005" text-anchor="middle" font-family="Georgia,serif">Ce plateau ne doit jamais être vu des voyants — il reste fermé sous le couvercle pendant toute la partie</text>
+  </svg>
+</div>
+
+<!-- ══ COUVERCLE ══ -->
 <div class="plateau-wrap">
-  <p class="plateau-label">— PLATEAU INTÉRIEUR · VU OUVERT · LE GARDIEN SEUL LE VOIT —</p>
+  <p class="plateau-label">— COUVERCLE · FACE VISIBLE PAR TOUS · LES 21 CERCLES D'ARCANES —</p>
   <svg width="100%" viewBox="0 0 680 1020" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="gBg" cx="50%" cy="40%" r="70%">
